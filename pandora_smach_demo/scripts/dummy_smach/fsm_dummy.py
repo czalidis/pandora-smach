@@ -22,7 +22,7 @@ def main():
         sm_target_selector = exploration.createTargetSelectorContainer(['target_sent'], 'explore')
         StateMachine.add('TARGET_CONTROLLER', sm_target_selector, transitions={'target_sent':'succeeded'})
 
-    sis = smach_ros.IntrospectionServer('smach_server', sm, '/')
+    sis = smach_ros.IntrospectionServer('smach_server', sm, '/DUMMY_FSM')
     sis.start()
     sm.execute()
     rospy.spin()

@@ -15,6 +15,7 @@ class InitialTurnActionStub:
 		
 
 	def executeCb(self,goal):
+		rospy.sleep(4)
 		self._actionStubServer.set_succeeded()
 
 

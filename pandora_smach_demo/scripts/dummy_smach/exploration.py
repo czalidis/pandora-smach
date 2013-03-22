@@ -26,6 +26,6 @@ def createTargetSelectorContainer(out, target_type):
 		
 		StateMachine.add('GET_TARGET', SimpleActionState('/select_target', SelectTargetAction, goal=target_selection_goal, result_slots=['target_pose']), transitions={'succeeded':'MOVE_BASE'}, remapping={'target_pose':'next_target'})
 		
-		StateMachine.add('MOVE_BASE', SimpleActionState('move_base', MoveBaseAction, goal_key='move_to_target'), transitions={'succeeded':'target_sent'}, remapping={'next_target':'move_to_target'})
+		StateMachine.add('MOVE_BASE', SimpleActionState('/navigation/move_base', MoveBaseAction, goal_key='move_to_target'), transitions={'succeeded':'target_sent'}, remapping={'next_target':'move_to_target'})
 		
 	return sm_target_selector
