@@ -1,0 +1,19 @@
+<package>
+  <description brief="padora_smach_demo">
+
+     smach_tutorial
+
+  </description>
+  <author>sanzoulapi</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/smach_tutorial</url>
+  
+  
+  <depend package="rospy" />
+  <depend package="smach" />
+  <depend package="smach_ros" />
+
+</package>
+
+
