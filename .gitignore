@@ -11,3 +11,11 @@
 *.lai
 *.la
 *.a
+
+#ROS
+build/
+bin/
+lib/
+msg_gen/
+srv_gen/
+src/

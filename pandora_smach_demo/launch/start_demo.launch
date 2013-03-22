@@ -1,0 +1,12 @@
+<launch>
+    <!-- Turtlesim Node-->
+    <node pkg="pandora_smach_demo" type="navigation_stub.py" name="navigation_stub"/>
+    
+    <node pkg="pandora_smach_demo" type="initial_turner_stub.py" name="initial_turner"/>
+    
+    <node pkg="pandora_smach_demo" type="target_selector_stub.py" name="target_selector_stub"/>
+    
+    <node pkg="pandora_smach_demo" type="victim_manager_stub.py" name="victim_manager_stub"/>
+
+         
+  </launch>

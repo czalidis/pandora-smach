@@ -9,10 +9,12 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/smach_tutorial</url>
   
-  
   <depend package="rospy" />
   <depend package="smach" />
   <depend package="smach_ros" />
+  <depend package="move_base_msgs" />
+  <depend package="actionlib" />
+  <depend package="pandora_smach_demo_msgs" />
 
 </package>
 
