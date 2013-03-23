@@ -17,10 +17,9 @@ def main():
 
     sm = StateMachine(outcomes=['succeeded','aborted','preempted'])
     with sm:
-        StateMachine.add('INITIAL_TURN', SimpleActionState('/navigation/initial_turn', InitialTurnAction), transitions={'succeeded':'TARGET_CONTROLLER'})
+        StateMachine.add('INITIAL_TURN', SimpleActionState('/navigation/initial_turn', InitialTurnAction), transitions={'succeeded':'EXPLORATION'})
         
-        sm_target_selector = exploration.createTargetSelectorContainer(['target_sent'], 'explore')
-        StateMachine.add('TARGET_CONTROLLER', sm_target_selector, transitions={'target_sent':'succeeded'})
+        StateMachine.add('EXPLORATION', exploration.createExplorationContainer(), transitions={'next_target':'EXPLORATION'})
 
     sis = smach_ros.IntrospectionServer('smach_server', sm, '/DUMMY_FSM')
     sis.start()
