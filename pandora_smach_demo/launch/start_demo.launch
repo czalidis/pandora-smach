@@ -8,7 +8,7 @@
     
     <node pkg="pandora_smach_demo" type="victim_manager_stub.py" name="victim_manager_stub"/>
    
-    <node pkg="pandora_smach_demo" type="fsm_dummy.py" name="fsm_dummy"/>
+    <node pkg="pandora_smach_demo" type="fsm_dummy.py" name="fsm_dummy" output="screen"/>
 
          
   </launch>

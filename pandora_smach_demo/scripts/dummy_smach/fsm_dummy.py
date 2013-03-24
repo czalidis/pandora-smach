@@ -4,13 +4,16 @@ import rospy
 import smach
 import smach_ros
 
+import threading
+
 from move_base_msgs.msg import MoveBaseAction
 from pandora_smach_demo_msgs.msg import InitialTurnAction
 
 from smach import State, StateMachine
 from smach_ros import SimpleActionState
 
-import exploration 
+import exploration
+import identification
 
 def main():
     rospy.init_node("fsm_dummy")
@@ -19,11 +22,21 @@ def main():
     with sm:
         StateMachine.add('INITIAL_TURN', SimpleActionState('/navigation/initial_turn', InitialTurnAction), transitions={'succeeded':'EXPLORATION'})
         
-        StateMachine.add('EXPLORATION', exploration.createExplorationContainer(), transitions={'next_target':'EXPLORATION'})
+        StateMachine.add('EXPLORATION', exploration.ExplorationContainer(), transitions={'next_target':'EXPLORATION','victim_thermal':'IDENTIFICATION_SIMPLE','victim_camera':'IDENTIFICATION_TRACKING'})
+        
+        StateMachine.add('IDENTIFICATION_SIMPLE', identification.IdentificationSimpleContainer(), transitions={'parked':'succeeded','aborted':'aborted'})
+        
+        StateMachine.add('IDENTIFICATION_TRACKING', identification.IdentificationTrackingContainer(), transitions={'identification_finished':'succeeded','aborted':'aborted'})
 
     sis = smach_ros.IntrospectionServer('smach_server', sm, '/DUMMY_FSM')
     sis.start()
-    sm.execute()
+    
+    smach_ros.set_preempt_handler(sm)
+
+    # Execute SMACH tree in a separate thread so that we can ctrl-c the script
+    smach_thread = threading.Thread(target = sm.execute)
+    smach_thread.start()
+        
     rospy.spin()
     sis.stop()
 
