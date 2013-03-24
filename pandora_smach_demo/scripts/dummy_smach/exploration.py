@@ -38,18 +38,24 @@ class DecideVictimState(State):
 
 
 def ExplorationContainer():
-	cc = Concurrence(outcomes=['next_target','victim_thermal','victim_camera','aborted','preempted'], default_outcome='next_target', outcome_map={'next_target':{'TARGET_CONTROLLER':'target_sent'},'victim_thermal':{'VICTIM_MONITOR':'victim_thermal'}, 'victim_camera':{'VICTIM_MONITOR':'victim_camera'}},child_termination_cb=lambda so: True)
+	cc = Concurrence(outcomes=['next_target','victim_thermal','victim_camera','aborted','preempted'], 
+	default_outcome='next_target', outcome_map={'next_target':{'TARGET_CONTROLLER':'target_sent'},
+	'victim_thermal':{'VICTIM_MONITOR':'victim_thermal'}, 'victim_camera':{'VICTIM_MONITOR':'victim_camera'}, 
+	'preempted':{'TARGET_CONTROLLER':'preempted'}, 'aborted':{'TARGET_CONTROLLER':'aborted'}},
+	child_termination_cb=lambda so: True)
 	
 	with cc:
 		Concurrence.add('TARGET_CONTROLLER', utils.TargetSelectorContainer('explore'))
 		
-		sm_victim_monitor = StateMachine(outcomes=['victim_thermal','victim_camera',])
+		sm_victim_monitor = StateMachine(outcomes=['victim_thermal','victim_camera','preempted'])
 		with sm_victim_monitor:
 			sm_victim_monitor.userdata.victim_type = 0
 						
-			StateMachine.add('VICTIM_MONITORING', MonitorVictimState(), transitions={'invalid':'VICTIM_MONITORING', 'valid':'VICTIM_DECIDE'})
+			StateMachine.add('VICTIM_MONITORING', MonitorVictimState(), 
+			transitions={'invalid':'VICTIM_MONITORING', 'valid':'VICTIM_DECIDE', 'preempted':'preempted'})
 			
-			StateMachine.add('VICTIM_DECIDE', DecideVictimState(), transitions={'thermal':'victim_thermal','camera':'victim_camera'})
+			StateMachine.add('VICTIM_DECIDE', DecideVictimState(), 
+			transitions={'thermal':'victim_thermal','camera':'victim_camera'})
 			
 		Concurrence.add('VICTIM_MONITOR', sm_victim_monitor)
 		
