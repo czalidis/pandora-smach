@@ -16,7 +16,7 @@ class SelectTargetActionStub:
 
 	def executeCb(self,goal):
 		rospy.sleep(4)
-		result = GetTargetResult()
+		result = SelectTargetResult()
 		self._actionStubServer.set_succeeded(result)
 
 
