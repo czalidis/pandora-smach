@@ -14,26 +14,26 @@ import utils
 
 def IdentificationSimpleContainer():
 	
-	sm_identification_simple = StateMachine(['parked','aborted'])
+	sm_identification_simple = StateMachine(['parked','aborted','preempted'])
 	
 	with sm_identification_simple:
 		
-		StateMachine.add('GET_VICTIMS', SimpleActionState('/navigation/initial_turn', InitialTurnAction), transitions={'succeeded':'GO_TO_VICTIM','aborted':'aborted'})
+		StateMachine.add('GET_VICTIMS', SimpleActionState('/navigation/initial_turn', InitialTurnAction), transitions={'succeeded':'GO_TO_VICTIM'})
 		
-		StateMachine.add('GO_TO_VICTIM', utils.TargetSelectorContainer('victim'), transitions={'target_sent':'PARK','aborted':'aborted'})
+		StateMachine.add('GO_TO_VICTIM', utils.TargetSelectorContainer('victim'), transitions={'target_sent':'PARK','aborted':'aborted','preempted':'preempted'})
 		
-		StateMachine.add('PARK', SimpleActionState('/navigation/initial_turn', InitialTurnAction), transitions={'succeeded':'parked','aborted':'aborted'})
+		StateMachine.add('PARK', SimpleActionState('/navigation/initial_turn', InitialTurnAction), transitions={'succeeded':'parked','aborted':'aborted','preempted':'preempted'})
 	
 	return sm_identification_simple
 
 
 def IdentificationTrackingContainer():
 	
-	sm_identification_tracking = StateMachine(['identification_finished','aborted'])
+	sm_identification_tracking = StateMachine(['identification_finished','aborted','preempted'])
 	
 	with sm_identification_tracking:
 		
-		StateMachine.add('DO_NOTHING', SimpleActionState('/navigation/initial_turn', InitialTurnAction), transitions={'succeeded':'identification_finished','aborted':'aborted'})
+		StateMachine.add('DO_NOTHING', SimpleActionState('/navigation/initial_turn', InitialTurnAction), transitions={'succeeded':'identification_finished','aborted':'aborted','preempted':'preempted'})
 	
 	return sm_identification_tracking
 	

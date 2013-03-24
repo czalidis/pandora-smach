@@ -24,14 +24,14 @@ def targetSelectionGoal(target_type):
 	
 def TargetSelectorContainer(target_type):
 	
-	sm_target_selector = StateMachine(['target_sent','aborted'])
+	sm_target_selector = StateMachine(['target_sent','aborted','preempted'])
 	
 	with sm_target_selector:
 		
 		target_selection_goal = targetSelectionGoal(target_type)
-		StateMachine.add('GET_TARGET', SimpleActionState('/select_target', SelectTargetAction, goal=target_selection_goal, result_slots=['target_pose']), transitions={'succeeded':'MOVE_BASE','aborted':'aborted'}, remapping={'target_pose':'next_target'})
+		StateMachine.add('GET_TARGET', SimpleActionState('/select_target', SelectTargetAction, goal=target_selection_goal, result_slots=['target_pose']), transitions={'succeeded':'MOVE_BASE','aborted':'aborted','preempted':'preempted'}, remapping={'target_pose':'next_target'})
 		
-		StateMachine.add('MOVE_BASE', SimpleActionState('/navigation/move_base', MoveBaseAction, goal_key='move_to_target'), transitions={'succeeded':'target_sent','aborted':'aborted'}, remapping={'next_target':'move_to_target'})
+		StateMachine.add('MOVE_BASE', SimpleActionState('/navigation/move_base', MoveBaseAction, goal_key='move_to_target'), transitions={'succeeded':'target_sent','aborted':'aborted','preempted':'preempted'}, remapping={'next_target':'move_to_target'})
 		
 	return sm_target_selector
 	
