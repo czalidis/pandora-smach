@@ -30,13 +30,12 @@ def TargetSelectorContainer(target_type):
 		
 		target_selection_goal = targetSelectionGoal(target_type)
 		StateMachine.add('GET_TARGET', SimpleActionState('/select_target', SelectTargetAction, 
-		goal=target_selection_goal, result_slots=['target_pose']), 
+		goal=target_selection_goal, result_key='target_pose'), 
 		transitions={'succeeded':'MOVE_BASE','aborted':'aborted','preempted':'preempted'}, 
 		remapping={'target_pose':'next_target'})
 		
-		StateMachine.add('MOVE_BASE', SimpleActionState('/navigation/move_base', MoveBaseAction, goal_key='move_to_target'), 
-		transitions={'succeeded':'target_sent','aborted':'aborted','preempted':'preempted'}, 
-		remapping={'next_target':'move_to_target'})
+		StateMachine.add('MOVE_BASE', SimpleActionState('/navigation/move_base', MoveBaseAction, goal_key='next_target'), 
+		transitions={'succeeded':'target_sent','aborted':'aborted','preempted':'preempted'})
 		
 	return sm_target_selector
 	

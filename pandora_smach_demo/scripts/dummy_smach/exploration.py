@@ -16,11 +16,12 @@ class MonitorVictimState(MonitorState):
 		MonitorState.__init__(self,'/victim_found', VictimFound, self.monitor_cb)
 		
 	def monitor_cb(self, userdata, msg):
-		if msg.victimNotificationType == msg.TYPE_THERMAL or msg.victimNotificationType == msg.TYPE_CAMERA:
-			userdata.victim_type = msg.victimNotificationType
-			return True
-		else:
-			return False
+		return False
+		#~ if msg.victimNotificationType == msg.TYPE_THERMAL or msg.victimNotificationType == msg.TYPE_CAMERA:
+			#~ userdata.victim_type = msg.victimNotificationType
+			#~ return True
+		#~ else:
+			#~ return False
 
 class DecideVictimState(State):
 	def __init__(self):
@@ -41,18 +42,19 @@ def ExplorationContainer():
 	cc = Concurrence(outcomes=['next_target','victim_thermal','victim_camera','aborted','preempted'], 
 	default_outcome='next_target', outcome_map={'next_target':{'TARGET_CONTROLLER':'target_sent'},
 	'victim_thermal':{'VICTIM_MONITOR':'victim_thermal'}, 'victim_camera':{'VICTIM_MONITOR':'victim_camera'}, 
-	'preempted':{'TARGET_CONTROLLER':'preempted'}, 'aborted':{'TARGET_CONTROLLER':'aborted'}},
+	'preempted':{'TARGET_CONTROLLER':'preempted','VICTIM_MONITOR':'preempted'}, 'aborted':{'TARGET_CONTROLLER':'aborted'}},
 	child_termination_cb=lambda so: True)
 	
 	with cc:
 		Concurrence.add('TARGET_CONTROLLER', utils.TargetSelectorContainer('explore'))
 		
 		sm_victim_monitor = StateMachine(outcomes=['victim_thermal','victim_camera','preempted'])
+		sm_victim_monitor.userdata.victim_type = 0
 		with sm_victim_monitor:
-			sm_victim_monitor.userdata.victim_type = 0
-						
+			
 			StateMachine.add('VICTIM_MONITORING', MonitorVictimState(), 
-			transitions={'invalid':'VICTIM_MONITORING', 'valid':'VICTIM_DECIDE', 'preempted':'preempted'})
+			transitions={'invalid':'VICTIM_MONITORING', 'valid':'VICTIM_DECIDE', 'preempted':'preempted'}, 
+			remapping={'victim_type':'victim_type'})
 			
 			StateMachine.add('VICTIM_DECIDE', DecideVictimState(), 
 			transitions={'thermal':'victim_thermal','camera':'victim_camera'})
