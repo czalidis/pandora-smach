@@ -7,7 +7,7 @@ import smach_ros
 from pandora_smach_demo_msgs.msg import SelectTargetGoal, SelectTargetAction
 from move_base_msgs.msg import MoveBaseAction
 
-from smach import StateMachine
+from smach import StateMachine, Iterator
 from smach_ros import SimpleActionState
 
 
@@ -39,7 +39,18 @@ def TargetSelectorContainer(target_type):
 		
 	return sm_target_selector
 	
-def ParkContainer():
-	return False
+def make_iterator(container, max_iter=1):
+    
+	it = Iterator(outcomes = ['preempted','aborted','time_out'],
+						   it = lambda: range(0, max_iter),
+						   it_label = 'index',
+						   input_keys=[],
+						   output_keys=[],
+						   exhausted_outcome = 'time_out')
+	with it:
+						
+		Iterator.set_contained_state('TARGET_CONTROLLER', container,  loop_outcomes=['target_sent'])
+
+	return it
 	
 	

@@ -44,14 +44,15 @@ def _termination_cb(outcome_map):
 	return True
 
 def ExplorationContainer():
-	cc = Concurrence(outcomes=['next_target','victim_thermal','victim_camera','aborted','preempted'], 
-	default_outcome='next_target', outcome_map={'next_target':{'TARGET_CONTROLLER':'target_sent'},
-	'victim_thermal':{'VICTIM_MONITOR':'victim_thermal'}, 'victim_camera':{'VICTIM_MONITOR':'victim_camera'}, 
-	'preempted':{'TARGET_CONTROLLER':'preempted','VICTIM_MONITOR':'preempted'}, 'aborted':{'TARGET_CONTROLLER':'aborted'}},
+	cc = Concurrence(outcomes=['victim_thermal','victim_camera','aborted','preempted','time_out'], 
+	default_outcome='aborted', outcome_map={'victim_thermal':{'VICTIM_MONITOR':'victim_thermal'}, 
+	'victim_camera':{'VICTIM_MONITOR':'victim_camera'},'preempted':{'EXPLORE':'preempted','VICTIM_MONITOR':'preempted'}, 
+	'aborted':{'EXPLORE':'aborted'}, 'time_out':{'EXPLORE':'time_out'}},
 	child_termination_cb=_termination_cb)
 	
 	with cc:
-		Concurrence.add('TARGET_CONTROLLER', utils.TargetSelectorContainer('explore'))
+		#~ Concurrence.add('TARGET_CONTROLLER', utils.TargetSelectorContainer('explore'))
+		Concurrence.add('EXPLORE', utils.make_iterator(utils.TargetSelectorContainer('explore'), max_iter=100))
 		
 		sm_victim_monitor = StateMachine(outcomes=['victim_thermal','victim_camera','preempted'])
 		sm_victim_monitor.userdata.victim_type = 0

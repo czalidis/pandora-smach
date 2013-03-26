@@ -17,7 +17,7 @@ class VictimManagerStub:
 		#~ VictimFound.victimNotificationType =  VictimFound.TYPE_THERMAL
 		while not rospy.is_shutdown():
 			self.victimNotifierPub.publish(victimFoundMsg)
-			rospy.sleep(15)
+			rospy.sleep(35)
 				
 		#~ self._actionStubServer = actionlib.SimpleActionServer('/get_victim_queue', SelectTargetAction, self.executeCb, False)
 		#~ self._actionStubServer.start()

@@ -24,14 +24,17 @@ def main():
         transitions={'succeeded':'EXPLORATION','aborted':'aborted','preempted':'preempted'})
         
         StateMachine.add('EXPLORATION', exploration.ExplorationContainer(), 
-        transitions={'next_target':'EXPLORATION','victim_thermal':'IDENTIFICATION_SIMPLE',
-        'victim_camera':'IDENTIFICATION_TRACKING','aborted':'aborted','preempted':'preempted'})
+        transitions={'victim_thermal':'IDENTIFICATION_SIMPLE',
+        'victim_camera':'IDENTIFICATION_TRACKING','aborted':'aborted','preempted':'preempted','time_out':'AGGRESSIVE_EXPLORATION'})
         
         StateMachine.add('IDENTIFICATION_SIMPLE', identification.IdentificationSimpleContainer(), 
         transitions={'parked':'succeeded','aborted':'aborted','preempted':'preempted'})
         
         StateMachine.add('IDENTIFICATION_TRACKING', identification.IdentificationTrackingContainer(), 
         transitions={'identification_finished':'succeeded','aborted':'aborted','preempted':'preempted'})
+        
+        StateMachine.add('AGGRESSIVE_EXPLORATION', SimpleActionState('/navigation/initial_turn', InitialTurnAction),
+        transitions={'succeeded':'succeeded','aborted':'aborted','preempted':'preempted'})
 
     sis = smach_ros.IntrospectionServer('smach_server', sm, '/DUMMY_FSM')
     sis.start()
